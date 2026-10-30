@@ -258,7 +258,7 @@ final class TreeFarmBot {
 		int maxY = logs.stream().mapToInt(BlockPos::getY).max().orElse(minY);
 		int half = minY + Math.max(1, (maxY - minY + 1) / 2);
 		axeTargets = new ArrayList<>();
-		for (BlockPos l : logs) if (l.getY() < half) axeTargets.add(l);
+		axeTargets.addAll(logs);
 		sortTargets(p, axeTargets);
 		current = null;
 		timeout = 0;
@@ -312,7 +312,7 @@ final class TreeFarmBot {
 
 	private BlockPos nextHoeTarget(MinecraftClient c, ClientPlayerEntity p) {
 		List<BlockPos> t = collect(c, saplingPos, 10, 40,
-				s -> s.isIn(BlockTags.LEAVES) || s.isIn(BlockTags.LOGS), 600);
+				s -> s.isIn(BlockTags.LEAVES), 600);
 		t.removeIf(b -> skipped.contains(b) || !inReach(p, b));
 		if (t.isEmpty()) { skipped.clear(); return null; }
 		// сначала листва, потом брёвна
