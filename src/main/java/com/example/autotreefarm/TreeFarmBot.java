@@ -51,7 +51,7 @@ final class TreeFarmBot {
 
 	void stop(MinecraftClient c, String why) {
 		state = State.OFF;
-		if (c.player != null && c.currentScreen instanceof GenericContainerScreen<?>) c.player.closeHandledScreen();
+		if (c.player != null && c.currentScreen instanceof GenericContainerScreen) c.player.closeHandledScreen();
 		AutoTreeFarmClient.msg(c, why);
 	}
 
@@ -196,7 +196,7 @@ final class TreeFarmBot {
 			wait = 4;
 			return;
 		}
-		if (c.currentScreen instanceof GenericContainerScreen<?>) { state = State.CHEST_TAKE; return; }
+		if (c.currentScreen instanceof GenericContainerScreen) { state = State.CHEST_TAKE; return; }
 		if (++timeout > 30) { stop(c, "Не удалось открыть сундук (сервер не разрешил?)"); return; }
 		wait = 2;
 	}
