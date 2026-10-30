@@ -24,7 +24,7 @@ public final class AutoTreeFarmClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (toggleKey.wasPressed()) {
 				if (client.currentScreen == null && client.player != null) {
-					if (BOT.isRunning()) BOT.stop(client, "Остановлено");
+					if (BOT.isRunning()) BOT.stop(client, "Stopped");
 					else BOT.start(client);
 				}
 			}

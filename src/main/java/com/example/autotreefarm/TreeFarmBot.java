@@ -46,7 +46,7 @@ final class TreeFarmBot {
 	void start(MinecraftClient c) {
 		state = State.PLANT;
 		wait = 0; plantFails = 0; boneUses = 0;
-		AutoTreeFarmClient.msg(c, "Запущено (J — стоп)");
+		AutoTreeFarmClient.msg(c, "Started, press J to stop");
 	}
 
 	void stop(MinecraftClient c, String why) {
@@ -71,7 +71,7 @@ final class TreeFarmBot {
 				default -> { }
 			}
 		} catch (Exception e) {
-			stop(c, "Ошибка: " + e);
+			stop(c, "Error: " + e);
 		}
 	}
 
@@ -117,12 +117,12 @@ final class TreeFarmBot {
 	// ---------- planting ----------
 
 	private void doPlant(MinecraftClient c, ClientPlayerEntity p) {
-		if (!has(p, TreeFarmBot::isSapling)) { stop(c, "Саженцы закончились. Готово!"); return; }
+		if (!has(p, TreeFarmBot::isSapling)) { stop(c, "Out of saplings, done"); return; }
 		if (!select(c, p, TreeFarmBot::isSapling)) return;
 		if (wait > 0) return;
 		BlockPos ground = findGround(c, p);
 		if (ground == null) {
-			if (++plantFails > 5) stop(c, "Не нашёл подходящий блок земли рядом");
+			if (++plantFails > 5) stop(c, "No dirt block in reach");
 			wait = 10;
 			return;
 		}
@@ -165,7 +165,7 @@ final class TreeFarmBot {
 				timeout = 0;
 				return;
 			}
-			if (boneUses > 80) { stop(c, "Дерево не растёт (80 костной муки). Проверь место/свет"); return; }
+			if (boneUses > 80) { stop(c, "Tree won't grow after 80 bone meal, check space and light"); return; }
 			if (!select(c, p, TreeFarmBot::isBone)) return;
 			if (wait > 0) return;
 			use(c, p, saplingPos, Direction.UP);
@@ -179,7 +179,7 @@ final class TreeFarmBot {
 		}
 		// саженец пропал / ещё не появился
 		if (++timeout > 20) {
-			if (++plantFails > 5) { stop(c, "Саженец не посадился"); return; }
+			if (++plantFails > 5) { stop(c, "Couldn't plant the sapling"); return; }
 			state = State.PLANT;
 		}
 		wait = 3;
@@ -190,14 +190,14 @@ final class TreeFarmBot {
 	private void doChestOpen(MinecraftClient c, ClientPlayerEntity p) {
 		if (chestPos == null) {
 			chestPos = findSignChest(c, p);
-			if (chestPos == null) { stop(c, "Нет костной муки и не найден сундук с табличкой «костная мука» (в радиусе " + CHEST_RANGE + " бл.)"); return; }
+			if (chestPos == null) { stop(c, "Out of bone meal and no chest with a \"костная мука\" sign within " + CHEST_RANGE + " blocks"); return; }
 			use(c, p, chestPos, Direction.UP);
 			timeout = 0;
 			wait = 4;
 			return;
 		}
 		if (c.currentScreen instanceof GenericContainerScreen) { state = State.CHEST_TAKE; return; }
-		if (++timeout > 30) { stop(c, "Не удалось открыть сундук (сервер не разрешил?)"); return; }
+		if (++timeout > 30) { stop(c, "Couldn't open the chest"); return; }
 		wait = 2;
 	}
 
@@ -213,7 +213,7 @@ final class TreeFarmBot {
 			}
 		}
 		p.closeHandledScreen();
-		if (!took) { stop(c, "В сундуке «костная мука» нет костной муки"); return; }
+		if (!took) { stop(c, "No bone meal in the chest"); return; }
 		state = State.GROW;
 		wait = 5;
 	}
@@ -268,7 +268,7 @@ final class TreeFarmBot {
 	/** axe=true: break lower half of logs with the axe; axe=false: leaves + remaining logs with the hoe. */
 	private void doBreak(MinecraftClient c, ClientPlayerEntity p, boolean axe) {
 		Predicate<ItemStack> tool = axe ? TreeFarmBot::isAxe : TreeFarmBot::isHoe;
-		if (!has(p, tool)) { stop(c, axe ? "Нет топора в инвентаре" : "Нет мотыги в инвентаре"); return; }
+		if (!has(p, tool)) { stop(c, axe ? "No axe in inventory" : "No hoe in inventory"); return; }
 		if (!select(c, p, tool)) return;
 		if (wait > 0) return;
 
