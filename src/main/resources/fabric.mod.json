@@ -1,0 +1,21 @@
+{
+	"schemaVersion": 1,
+	"id": "autotreefarm",
+	"version": "${version}",
+	"name": "Auto Tree Farm",
+	"description": "Client-side bot: plants a sapling, bone-meals it, chops the tree and repeats.",
+	"authors": [],
+	"license": "MIT",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.example.autotreefarm.AutoTreeFarmClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "=1.21.11",
+		"java": ">=21",
+		"fabric-api": ">=0.141.3"
+	}
+}
